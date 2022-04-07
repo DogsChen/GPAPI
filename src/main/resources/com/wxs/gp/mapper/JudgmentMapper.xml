@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxs.gp.mapper.JudgmentMapper">
+    <!--    void addJudgment(Judgment judgment);-->
+    <insert id="addJudgment" parameterType="judgment" keyProperty="id">
+        INSERT INTO `gpssm`.`judgment` (`content`, `settime`, `uid`, `productsale_id`)
+        VALUES (#{content}, #{settime}, #{uid}, #{productsale_id});
+    </insert>
+
+    <!--    List<Judgment> getJudgmentByPid(int id);-->
+    <select id="getJudgmentByPid" parameterType="int" resultType="judgment">
+        select * from ProductSale
+        <where>
+            <if test="id!=0">
+                and productsale_id = #{id}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

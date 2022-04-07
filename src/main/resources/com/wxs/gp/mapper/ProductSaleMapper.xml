@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxs.gp.mapper.ProductSaleMapper">
+
+    <!--    //添加商品规格-->
+    <!--    void addProductSale(ProductSale Product);-->
+    <insert id="addProductSale" parameterType="productsale" useGeneratedKeys="true" keyProperty="id">
+        insert into productsale (`name`, `settime`, `uid`)
+        values (#{name}, #{settime}, #{uid})
+    </insert>
+    <!--    //添加商品s-->
+    <!--    void addProductSales(ProductSale[] Product);-->
+    <insert id="addProductSales" parameterType="productsale">
+        insert into productsale ( `name`, `settime`, `uid`)values
+        <foreach collection="list" open="id in(" close=")" item="product" separator=",">
+            #{product.name},#{product.settime},#{product.uid}
+        </foreach>
+    </insert>
+    <!--    //    删除商品-->
+    <!--    void deleteProductSale(int id);-->
+    <update id="deleteProductSale" parameterType="int">
+        update productsale
+        set isdelete=1
+        where id = #{id}
+    </update>
+    <!--    //    删除商品s-->
+    <!--    void deleteProductTypeByids(int[] Productids);-->
+    <update id="deleteProductTypeByids" parameterType="list">
+        update productsale set isdelete=1
+        <where>
+            <foreach collection="list" open="id in(" close=")" item="id" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </update>
+
+    <!--    List<ProductSale> getProductByid(int id);-->
+    <select id="getProductByid" parameterType="int" resultMap="getProductByid_map">
+        select * from productsale
+        left join prodcutsaletype on prodcutsaletype.productsale_id = productsale.id
+        <where>
+            <if test="id!=0">
+                id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <!--    List<ProductSale> getProductAll();-->
+    <resultMap type="ProductSale" id="getProductByid_map">
+        <id property="id" column="id"/>
+        <result property="settime" column="settime"/>
+        <result property="name" column="name"/>
+        <result property="uid" column="uid"/>
+
+        <collection property="user" ofType="user">
+            <id property="orderId" column="oid"/>
+            <result property="username" column="username"/>
+            <result property="usertype" column="usertype"/>
+        </collection>
+    </resultMap>
+
+    <select id="getProductAll" resultMap="getProductByid_map">
+        select *
+        from productsale
+#         left join prodcutsaletype on prodcutsaletype.productsale_id = productsale.id
+                 inner join user on user.id = productsale.uid
+    </select>
+    <!--    getProdcutSaleListTop-->
+    <select id="getProdcutSaleListTop" parameterType="int" resultMap="getProductByid_map">
+        select *
+        from productsale
+#         left join prodcutsaletype on prodcutsaletype.productsale_id = productsale.id
+                 inner join user on user.id = productsale.uid
+        limit #{count}
+    </select>
+
+</mapper>

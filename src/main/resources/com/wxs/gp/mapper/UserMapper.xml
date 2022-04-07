@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxs.gp.mapper.UserMapper">
+
+    <!--sql语句抽取-->
+    <sql id="selectUser">select *
+                         from user</sql>
+
+    <select id="getUserByContent" parameterType="user" resultType="user">
+        <include refid="selectUser"></include>
+        <where>
+            <if test="id!=0 and id!=''">
+                and id=#{id}
+            </if>
+            <if test="username!=null and username!=''">
+                and username=#{username}
+            </if>
+            <if test="password!=null and password!=''">
+                and password=#{password}
+            </if>
+            <if test="email!=null and email!=''">
+                and email=#{email}
+            </if>
+            <if test="phoneNum!=null and phoneNum!=''">
+                and phoneNum=#{phoneNum}
+            </if>
+            <if test="gender!=null and gender!=''">
+                and gender=#{gender}
+            </if>
+        </where>
+    </select>
+
+    <!--    通过id 查询多个用户   注意parameterType和collection 的配置 -->
+    <select id="findUserByIds" parameterType="list" resultType="user">
+        # 类型写 list 结果写实体类
+        <include refid="selectUser"></include>
+        <where>
+            # 1. List[User] findUserByIds(@Param("ids") List[Integer] ids);
+            # foreach collection="ids" open="id in(" close=")" item="id" separator=","
+            # 2.
+            # foreach collection="list" open="id in(" close=")" item="id" separator=","
+            # 以上两种都可以
+            <foreach collection="ids" open="id in(" close=")" item="id" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+
+</mapper>
